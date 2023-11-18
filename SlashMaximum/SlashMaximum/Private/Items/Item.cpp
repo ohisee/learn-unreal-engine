@@ -6,11 +6,10 @@
 #include "SlashMaximum/DebugMacros.h"
 
 // Sets default values
-AItem::AItem()
+AItem::AItem() //: Amplitude(0.25f)
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
@@ -67,6 +66,12 @@ void AItem::BeginPlay()
 	//DRAW_SPHERE_COLOR(Location, FColor::Blue);
 	//DRAW_VECTOR(Location, Location + Forward * 100.f);
 	//DRAW_BOX(Location);
+
+	int32 AvgInt = Average<int32>(1, 3);
+	UE_LOG(LogTemp, Warning, TEXT("Average of int32: %d"), AvgInt);
+
+	float AvgFloat = Average<float>(3.98f, 7.86f);
+	UE_LOG(LogTemp, Warning, TEXT("Average of float: %f"), AvgFloat);
 }
 
 // Called every frame
@@ -92,15 +97,37 @@ void AItem::Tick(float DeltaTime)
 
 	// make movement frame rate independent, scale by DeltaTime
 	// Movement rate in units of cm/s (centimeters per second) 
-	float MovementRate = 50.f;
-
-	float RotationRate = 45.f;
+	//float MovementRate = 50.f;
+	//float RotationRate = 45.f;
 
 	// Movement rate * DeltaTime (cm/s) * (s/frame) = (cm/frame)
-	AddActorWorldOffset(FVector(MovementRate * DeltaTime, 0.f, 0.f));
-	AddActorWorldRotation(FRotator(0.f, RotationRate * DeltaTime, 0.f));
+	//AddActorWorldOffset(FVector(MovementRate * DeltaTime, 0.f, 0.f));
+	//AddActorWorldRotation(FRotator(0.f, RotationRate * DeltaTime, 0.f));
+
+	RunningTime += DeltaTime;
+
+	// float Amplitude = 0.25f; // distance of traveling up and down
+	// float SpeedUp = 5.f;
+	// float DeltaZ = Amplitude * FMath::Sin(RunningTime * TimeConstant);
+	// AddActorWorldOffset(FVector(0.f, 0.f, DeltaZ));
 
 	DRAW_SPHERE_SingleFrame(GetActorLocation());
 	// GetActorForwardVector() returns vector with lenght of 1 centimeter (cm)
 	DRAW_VECTOR_SingleFrame(GetActorLocation(), GetActorLocation() + GetActorForwardVector() * 100.f);
+
+	// mid point between the origin and the actor 
+	FVector AvgVector = Average<FVector>(GetActorLocation(), FVector::ZeroVector);
+	DRAW_POINT_SingleFrame(AvgVector);
+}
+
+// blueprint pure function
+float AItem::TransformedSin()
+{
+	return Amplitude * FMath::Sin(RunningTime * TimeConstant);
+}
+
+// blueprint pure function
+float AItem::TransformedCosin()
+{
+	return Amplitude * FMath::Cos(RunningTime * TimeConstant);
 }
