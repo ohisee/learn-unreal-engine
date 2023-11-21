@@ -32,7 +32,7 @@ protected:
 	// EditAnywhere - we can edit anywhere in the instance in the world and in default blue print
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sine Parameters")
 	float TimeConstant = 5.f;
-	
+
 	// BlueprintCallable 
 	// BlueprintPure - pure function 
 	UFUNCTION(BlueprintPure)
@@ -50,6 +50,10 @@ private:
 	// meta = (AllowPrivateAccess = "true") - expose a private variable to the event graph
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float RunningTime;
+
+	// use UPROPERTY to mark this variable to participate Unreal Engine reflection system
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* ItemMesh;
 };
 
 template<typename T>
