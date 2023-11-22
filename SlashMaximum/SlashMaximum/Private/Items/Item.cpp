@@ -10,6 +10,10 @@ AItem::AItem() //: Amplitude(0.25f)
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMeshComponent"));
+	// Re-assign root component to Item Mesh and default scence root will be garbage collected
+	RootComponent = ItemMesh;
 }
 
 // Called when the game starts or when spawned
@@ -98,7 +102,7 @@ void AItem::Tick(float DeltaTime)
 	// make movement frame rate independent, scale by DeltaTime
 	// Movement rate in units of cm/s (centimeters per second) 
 	//float MovementRate = 50.f;
-	//float RotationRate = 45.f;
+	float RotationRate = 85.f;
 
 	// Movement rate * DeltaTime (cm/s) * (s/frame) = (cm/frame)
 	//AddActorWorldOffset(FVector(MovementRate * DeltaTime, 0.f, 0.f));
@@ -118,6 +122,11 @@ void AItem::Tick(float DeltaTime)
 	// mid point between the origin and the actor 
 	FVector AvgVector = Average<FVector>(GetActorLocation(), FVector::ZeroVector);
 	DRAW_POINT_SingleFrame(AvgVector);
+
+	// try to rotate this actor
+	FRotator ActorRotator = GetActorRotation();
+	ActorRotator.Yaw = RotationRate * DeltaTime;
+	AddActorWorldRotation(ActorRotator);
 }
 
 // blueprint pure function
